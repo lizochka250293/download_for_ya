@@ -6,16 +6,20 @@ class YandexUploader:
     URL = 'https://cloud-api.yandex.net/v1/disk/resources/upload'
     header = {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': f'OAuth {token}'}
 
-    def __init__(self, token):
+    def __init__(self, token, URL, header):
         self.token = token
+        self.URL = URL
+        self.header = header
 
-    def upload(self, file_path, replace = False):
+    def upload(self, file_path):
         """Метод загружает файл из file_path на яндекс диск"""
-        res = requests.get(f'{URL}/upload?path={file_path}&overwrite={replace}', headers=header).json()
+        self.file_path = file_path
+
+        res = requests.get(f'{self.URL}/path={self.file_path}, headers=self.header).json()
 
         with open(file_path, 'r') as f:
             try:
-                requests.put(res['href'], files={'file_path': f})
+                requests.post(res['href'], files={'file_path': f})
             except KeyError:
                 print(res)
 
